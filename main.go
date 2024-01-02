@@ -28,9 +28,10 @@ func main() {
 		fiber.Config{},
 	)
 
-	// graceful shutdown logic
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
+	// APP: routes
+
+	appV1 := app.Group("/api/v1")
+	appV1.Route("/user")
 
 	// start server in background
 	go func() {
@@ -38,6 +39,10 @@ func main() {
 			log.Panic(err)
 		}
 	}()
+
+	// graceful shutdown logic
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 
 	// block program until we receive a failure or termination signal
 	<-signalChan

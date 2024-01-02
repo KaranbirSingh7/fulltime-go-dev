@@ -1,0 +1,2 @@
+install-air:
+	@air -v ||  echo "install air cli using https://github.com/cosmtrek/air"
