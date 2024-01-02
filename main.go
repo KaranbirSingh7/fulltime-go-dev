@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -11,10 +12,18 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/karanbirsingh7/fulltime-go-dev/api"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
 	PORT int
+)
+
+const (
+	DB_URI          = "mongodb://localhost:27017"
+	DB_NAME         = "hotel-reservation"
+	USER_COLLECTION = "users"
 )
 
 func main() {
@@ -29,6 +38,13 @@ func main() {
 		fiber.Config{},
 	)
 
+	// DATABASE configuration
+	dbClient, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(DB_URI))
+	if err != nil {
+		log.Panic(err)
+	}
+	dbClient.Database(DB_NAME).Collection(USER_COLLECTION)
+
 	// APP: routes
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(map[string]interface{}{
@@ -36,8 +52,20 @@ func main() {
 		})
 	})
 
+	app.Get("/health", func(c *fiber.Ctx) error {
+		var filter any
+		databases, err := dbClient.ListDatabaseNames(context.TODO(), filter, options.ListDatabases())
+		if err != nil {
+			c.JSON(map[string]interface{}{
+				"error": err,
+			})
+		}
+		return c.JSON(databases)
+	})
+
 	appV1 := app.Group("/api/v1")
-	appV1.Get("/user", api.HandleGetUser)
+	appV1.Get("/user", api.HandleGetUsers)
+	appV1.Get("/user/:id", api.HandleGetUser)
 
 	// start server in background
 	go func() {

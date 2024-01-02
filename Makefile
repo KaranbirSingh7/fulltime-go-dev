@@ -2,7 +2,7 @@ default: run
 
 include Makefile.tools
 
-run-local: install-air
+run-local: install-air docker-compose-up
 	air
 
 run:
@@ -13,3 +13,6 @@ test:
 
 docker-compose-up: docker-compose-check
 	docker compose up -d
+
+docker-compose-down:
+	docker compose down

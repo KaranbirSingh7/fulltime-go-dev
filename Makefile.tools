@@ -1,5 +1,5 @@
 install-air:
-	@air -v ||  echo "install air cli using https://github.com/cosmtrek/air"
+	@air -v ||  (echo "install air cli using https://github.com/cosmtrek/air" && exit 1)
 
 docker-compose-check:
 	@docker compose version
