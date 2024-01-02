@@ -10,3 +10,6 @@ run:
 
 test:
 	go test -v ./..
+
+docker-compose-up: docker-compose-check
+	docker compose up -d
