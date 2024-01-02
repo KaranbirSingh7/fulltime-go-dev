@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/karanbirsingh7/fulltime-go-dev/api"
 )
 
 var (
@@ -29,9 +30,14 @@ func main() {
 	)
 
 	// APP: routes
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON(map[string]interface{}{
+			"status": "running",
+		})
+	})
 
 	appV1 := app.Group("/api/v1")
-	appV1.Route("/user")
+	appV1.Get("/user", api.HandleGetUser)
 
 	// start server in background
 	go func() {
